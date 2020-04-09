@@ -122,12 +122,12 @@ let computeResults = (playerScore, dealerScore, scoreBoard) => {
   prompt(`Total sum of dealer's cards: ${dealerScore}`);
 
   if (playerWin(playerScore, dealerScore)) {
-    scoreBoard.Player += 1
+    scoreBoard.Player += 1;
     prompt('Congratulations! You Won!');
   } else if (draw(playerScore, dealerScore)) {
     prompt("It's a tie!");
   } else {
-    scoreBoard.Dealer += 1
+    scoreBoard.Dealer += 1;
     prompt('Computer Won. Please try again!');
   }
 };
@@ -177,15 +177,15 @@ while (true) {
   };
 
   while (!matchOver(scoreBoard)) {
-  
+
     beginRound(scoreBoard);
 
     let deck = initialiseDeck();
     shuffle(deck);
-  
+
     let playerHand = [];
     let dealerHand = [];
-  
+
     initialiseHand(deck, playerHand, dealerHand);
     let playerScore = total(playerHand);
     let dealerScore = total(dealerHand);
@@ -193,25 +193,25 @@ while (true) {
     prompt('Game Begins!\n');
 
     while (!busted(playerScore)) {
-  
+
       displayCurrentHand(playerHand, dealerHand, false, playerScore, dealerScore);
-  
+
       let playerChoice = askPlayer();
-  
+
       if (playerChoice === 'stay') break;
-  
+
       playerScore += total([deck[0]]);
       dealCard(deck, playerHand);
     }
-  
+
     displayCurrentHand(playerHand, dealerHand, true, playerScore, dealerScore);
-  
+
     if (busted(playerScore)) {
       prompt('The total sum of your cards exceeds 21. Please try again!');
       scoreBoard.Dealer += 1;
       console.log(' ');
       displayScore(scoreBoard);
-      
+
       if (matchOver(scoreBoard)) break;
 
       if (wantContinue() !== 'y') {
@@ -224,7 +224,7 @@ while (true) {
     prompt('You choose to stay.');
     console.log(' ');
     prompt("Dealer's turn");
-  
+
     while (dealerScore < DEALER_CUT_OFF) {
       let topCard = deck[0][0] + deck[0][1];
       console.log(`Dealer draws ${topCard}`);
@@ -232,12 +232,12 @@ while (true) {
       dealCard(deck, dealerHand);
     }
     console.log(`Dealer's hand: ${dealerHand.map(value => value[0] + value[1]).join(', ')}`);
-  
+
     if (busted(dealerScore)) {
       scoreBoard.Player += 1;
       displayDealerLost(dealerScore);
       displayScore(scoreBoard);
-      
+
       if (matchOver(scoreBoard)) break;
 
       if (wantContinue() !== 'y') {
