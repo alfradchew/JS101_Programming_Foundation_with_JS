@@ -37,8 +37,8 @@ let displayBoard = boardObj => {
 
 let initializeBoard = () => {
   let board = {};
-  for (let i = 1; i <= 9; i += 1) {
-    board[String(i)] = INITIAL_MARKER;
+  for (let idx = 1; idx <= 9; idx += 1) {
+    board[String(idx)] = INITIAL_MARKER;
   }
   return board;
 };
@@ -58,7 +58,7 @@ let joinOr = (arr, punctuation = ', ', conjunction = 'or') => {
         default:
           return accumulator + `${punctuation}${currentValue}`;
       }
-    }, '')
+    }, '');
 };
 
 let findAtRiskSquare = (line, board, marker) => {
@@ -95,25 +95,17 @@ let playerChoosesSquare = board => {
 
 let computerChoosesSquare = board => {
   let square;
-
-  // offense
-  for (let index = 0; index < WINNING_LINES.length; index += 1) {
-    let line = WINNING_LINES[index];
-    square = findAtRiskSquare(line, board, COMPUTER_MARKER);
-    if (square) break;
-  }
-
-  // defense
-  if (!square) {
+  // offense, then defense
+  for (let currentMarker of [COMPUTER_MARKER, HUMAN_MARKER]) {
     for (let index = 0; index < WINNING_LINES.length; index += 1) {
       let line = WINNING_LINES[index];
-      square = findAtRiskSquare(line, board, HUMAN_MARKER);
+      square = findAtRiskSquare(line, board, currentMarker);
       if (square) break;
     }
   }
 
   // pick #5
-  if (board['5'] === INITIAL_MARKER) {
+  if (!square && board['5'] === INITIAL_MARKER) {
     square = '5';
   }
 
@@ -153,7 +145,7 @@ let boardFull = board => {
 };
 
 let detectWinner = board => {
-  for (line of WINNING_LINES) {
+  for (let line of WINNING_LINES) {
     let [sq1, sq2, sq3] = line;
 
     if (
@@ -172,7 +164,7 @@ let detectWinner = board => {
   }
 
   return null;
-}
+};
 
 let someoneWon = board => {
   return !!detectWinner(board);
@@ -211,8 +203,8 @@ let beginRound = scoreBoard => {
 while (true) {
 
   let scoreBoard = {
-    'Player': 0,
-    'Computer': 0
+    Player: 0,
+    Computer: 0
   };
 
   while (true) {
@@ -220,16 +212,16 @@ while (true) {
     beginRound(scoreBoard);
 
     let board = initializeBoard();
-  
+
     while (true) {
       displayBoard(board);
       chooseSquare(board, currentPlayer);
       currentPlayer = alternatePlayer(currentPlayer);
       if (someoneWon(board) || boardFull(board)) break;
     }
-  
+
     displayBoard(board);
-  
+
     if (someoneWon(board)) {
       prompt(`${detectWinner(board)} won!`);
       scoreBoard[detectWinner(board)] += 1;
@@ -246,8 +238,8 @@ while (true) {
     if (restart('game') !== 'y') break;
   }
 
-  // Player stop playing the game before one of the player/computer score reaches 5
-  if ((scoreBoard.Player !== NUM_WINS) && (scoreBoard.Computer !== NUM_WINS)) break;
+  // Player stop playing the game before score reaches 5
+  if (![scoreBoard.Player, scoreBoard.Computer].includes(NUM_WINS)) break;
 
   if (restart('match') !== 'y') break;
 }
